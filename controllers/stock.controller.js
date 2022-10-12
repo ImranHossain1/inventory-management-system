@@ -1,12 +1,8 @@
-const Stock = require("../model/Stock")
+const { createStockService, getStockService, getStockBtIdService } = require("../services/stock.service");
 
 
-exports.getStock = async(req,res,next)=>{
+exports.getStocks = async(req,res,next)=>{
     try {
-      /* const products = await Product
-      .where('name').equals(/\w/)
-      .where('quantity').gt(100).lt(600)
-      .limit(2).sort({quantity :-1}) */
       let filters = {...req.query};
 
       //exclude sort, page, limit
@@ -52,13 +48,9 @@ exports.getStock = async(req,res,next)=>{
     }
   }
 
-  exports.createProduct =async(req,res,next)=>{
+  exports.createStock =async(req,res,next)=>{
     try {
-      //save or create
-      // const product = new Product(req.body)
-      // const result = await product.save()
-      const result = await createProductService(req.body)
-      result.logger()
+      const result = await createStockService(req.body)
       res.status(200).json({
         status: 'success',
         message:'Data inserted successfully!',
@@ -72,7 +64,30 @@ exports.getStock = async(req,res,next)=>{
       })
     }
   }
-  exports.updateProductById = async (req,res,next)=>{
+  exports.getStockById= async(req,res)=>{
+    try {
+      const {id} = req.params;
+      const stock = await getStockBtIdService(id)
+      if(!stock){
+        return res.status(400).json({
+          status: 'failed',
+          error: "Couldn't get the stock with this id",
+        })
+      }
+      res.status(200).json({
+        status:'success',
+        data: stock
+      })
+
+    } catch (error) {
+      res.status(400).json({
+        status: 'failed',
+        message: "Can't get the stock",
+        error: error.message
+      })
+    }
+  }
+/*   exports.updateStockById = async (req,res,next)=>{
     try {
       const {id} = req.params;
       const result = await updateProductByIdService(id, req.body);
@@ -89,24 +104,8 @@ exports.getStock = async(req,res,next)=>{
       })
     }
   }
-  exports.bulkUpdateProduct = async (req,res,next)=>{
-    try {
-      // console.log(req.body)
-      const result = await bulkUpdateProductService(req.body);
-      res.status(200).json({
-        status: "success",
-        message: "Successfully updated the product",
-        data: result
-      })
-    } catch (error) {
-      res.status(400).json({
-        status: 'failed',
-        message: "Couldn't update the product",
-        error: error.message
-      })
-    }
-  }
-  exports.deleteProductById = async (req,res,next)=>{
+  
+  exports.deleteStockById = async (req,res,next)=>{
     try {
       const {id} = req.params;
       const result = await deleteProductByIdService(id);
@@ -129,21 +128,4 @@ exports.getStock = async(req,res,next)=>{
       })
     }
   }
-
-  exports.bulkDeleteProduct = async (req,res,next)=>{
-    try {
-      // console.log(req.body)
-      const result = await bulkDeleteProductService(req.body.ids);
-      res.status(200).json({
-        status: "success",
-        message: "Successfully Deleted the given products",
-        data: result
-      })
-    } catch (error) {
-      res.status(400).json({
-        status: 'failed',
-        message: "Couldn't delete the products",
-        error: error.message
-      })
-    }
-  }
+ */
